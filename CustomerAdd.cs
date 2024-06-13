@@ -1,18 +1,7 @@
-﻿using Google.Protobuf.WellKnownTypes;
 using MySql.Data.MySqlClient;
-using MySqlX.XDevAPI.Common;
-using Org.BouncyCastle.Asn1;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace C969
@@ -34,13 +23,9 @@ namespace C969
             this.Close();
         }
 
-       
         public int customerID_Counter = 0;
-
         public int addressID_Counter = 0;
-
         public int countryID_Counter = 0;
-
         public int cityID_Counter = 0;
 
         private void button1_Click(object sender, EventArgs e)
@@ -52,27 +37,26 @@ namespace C969
             {
                 con.Open();
 
-                string address = textBox4.Text; 
+                string address = textBox4.Text.Trim(); // Trimmed
                 string addressid = addressID_Counter++.ToString();
                 string address2 = "";
                 string city = "";
                 string country = "";
                 int cityId = cityID_Counter++;
                 string postalCode = "12345";
-                string phone = textBox5.Text;
+                string phone = textBox5.Text.Trim(); // Trimmed
                 int customerID = customerID_Counter++;
-                string customerName = textBox2.Text;
+                string customerName = textBox2.Text.Trim(); // Trimmed
                 DateTime createDate = DateTime.Now;
                 string createdBy = "sqlUser";
                 string lastUpdate = createDate.ToString("yyyy-MM-dd HH:mm:ss");
                 string lastUpdateBy = "sqlUser";
                 bool active = true;
 
-
                 int countryId = countryID_Counter++;
 
                 string countryQuery = "INSERT INTO country (CountryId, Country, CreateDate, CreatedBy, LastUpdate, LastUpdateBy) " +
-                                            "VALUES (@CountryId, @Country, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy)";
+                                      "VALUES (@CountryId, @Country, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy)";
 
                 MySqlCommand countryCmd = new MySqlCommand(countryQuery, con);
                 countryCmd.Parameters.AddWithValue("@CountryId", countryId);
@@ -86,7 +70,7 @@ namespace C969
                 int countryId2 = (int)countryCmd.LastInsertedId;
 
                 string cityQuery = "INSERT INTO city (CityID, City, CountryID, CreateDate, CreatedBy, LastUpdate, LastUpdateBy) " +
-                                    "VALUES (@CityID, @City, @CountryID, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy)";
+                                   "VALUES (@CityID, @City, @CountryID, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy)";
 
                 MySqlCommand cityCmd = new MySqlCommand(cityQuery, con);
                 cityCmd.Parameters.AddWithValue("@CityID", cityId);
@@ -101,7 +85,7 @@ namespace C969
                 int cityId2 = (int)cityCmd.LastInsertedId;
 
                 string addressQuery = "INSERT INTO address (AddressID, Address, Address2, CityId, PostalCode, Phone, CreateDate, CreatedBy, LastUpdate, LastUpdateBy) " +
-                                       "VALUES (@AddressID, @Address, @Address2, @CityId, @PostalCode, @Phone, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy)";
+                                      "VALUES (@AddressID, @Address, @Address2, @CityId, @PostalCode, @Phone, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy)";
 
                 MySqlCommand addressCmd = new MySqlCommand(addressQuery, con);
                 addressCmd.Parameters.AddWithValue("@AddressID", addressid);
@@ -119,7 +103,7 @@ namespace C969
                 int addressId2 = (int)addressCmd.LastInsertedId;
 
                 string customerQuery = "INSERT INTO customer (CustomerID, CustomerName, AddressId, Active, CreateDate, CreatedBy, LastUpdate, LastUpdateBy) " +
-                                        "VALUES (@CustomerID, @CustomerName, @AddressId, @Active, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy)";
+                                       "VALUES (@CustomerID, @CustomerName, @AddressId, @Active, @CreateDate, @CreatedBy, @LastUpdate, @LastUpdateBy)";
 
                 MySqlCommand customerCmd = new MySqlCommand(customerQuery, con);
                 customerCmd.Parameters.AddWithValue("@CustomerID", customerID);
@@ -133,7 +117,6 @@ namespace C969
                 customerCmd.ExecuteNonQuery();
 
                 Main form = new Main();
-
                 form.UpdateDataGridView();
 
                 MessageBox.Show("Customer added successfully.");
@@ -167,8 +150,8 @@ namespace C969
             else
             {
                 textBox2.BackColor = Color.White;
-
             }
+
             if (string.IsNullOrEmpty(textBox4.Text))
             {
                 button1.Enabled = false;
@@ -178,6 +161,7 @@ namespace C969
             {
                 textBox4.BackColor = Color.White;
             }
+
             if (string.IsNullOrEmpty(textBox5.Text))
             {
                 button1.Enabled = false;
@@ -219,7 +203,7 @@ namespace C969
                 button1.Enabled = true;
                 textBox5.BackColor = Color.White;
             }
-            else if(match.Success == false || string.IsNullOrEmpty(textBox5.Text))
+            else if (!match.Success || string.IsNullOrEmpty(textBox5.Text))
             {
                 tooltip1.SetToolTip(textBox5, "Enter a valid phone number");
                 textBox5.BackColor = Color.Red;
